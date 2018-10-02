@@ -7,6 +7,7 @@ from torch.autograd import Variable
 from protonets.models import register_model
 
 from .utils import euclidean_dist
+import pdb
 
 class Flatten(nn.Module):
     def __init__(self):

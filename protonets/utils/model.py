@@ -13,6 +13,7 @@ def load(opt):
 
 def evaluate(model, data_loader, meters, desc=None):
     model.eval()
+    data_loader.reset()
 
     for field,meter in meters.items():
         meter.reset()

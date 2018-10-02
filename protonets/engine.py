@@ -32,6 +32,8 @@ class Engine(object):
 
             state['epoch_size'] = len(state['loader'])
 
+            state['loader'].reset()
+
             for sample in tqdm(state['loader'], desc="Epoch {:d} train".format(state['epoch'] + 1)):
                 state['sample'] = sample
                 self.hooks['on_sample'](state)

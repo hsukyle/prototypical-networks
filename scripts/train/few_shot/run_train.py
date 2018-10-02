@@ -31,6 +31,9 @@ parser.add_argument('--data.trainval', action='store_true', help="run in train+v
 parser.add_argument('--data.sequential', action='store_true', help="use sequential sampler instead of episodic (default: False)")
 parser.add_argument('--data.cuda', action='store_true', help="run in CUDA mode (default: False)")
 parser.add_argument('--data.rotations', action='store_true', help="3x data augmentation via rotations for Omniglot")
+parser.add_argument('--data.encoder', type=str, default='none', help='encoder name')
+parser.add_argument('--data.train_mode', type=str, default='kmeans')
+parser.add_argument('--data.test_mode', type=str, default='ground_truth')
 
 # model args
 default_model_name = 'protonet_conv'
