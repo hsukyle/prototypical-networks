@@ -128,6 +128,7 @@ def load(opt, splits):
             for class_name in f.readlines():
                 class_names.append(class_name.rstrip('\n'))
         if not opt['data.rotations']:
+            print('No data augmentation via rotations.')
             class_names_pruned = []
             for class_name in class_names:
                 pruned = class_name[:class_name.find('/rot')]
