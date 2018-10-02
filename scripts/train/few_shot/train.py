@@ -95,7 +95,7 @@ def main(opt):
             json.dump(meter_vals, f)
             f.write('\n')
 
-        if val_loader is not None:
+        if val_loader is not None and False:    # disable this block
             if meter_vals['val']['loss'] < hook_state['best_loss']:
                 hook_state['best_loss'] = meter_vals['val']['loss']
                 print("==> best model (loss = {:0.6f}), saving model...".format(hook_state['best_loss']))

@@ -47,7 +47,7 @@ parser.add_argument('--model.z_dim', type=int, default=64, metavar='ZDIM',
                     help="dimensionality of input images (default: 64)")
 
 # train args
-parser.add_argument('--train.epochs', type=int, default=10000, metavar='NEPOCHS',
+parser.add_argument('--train.epochs', type=int, default=300, metavar='NEPOCHS',
                     help='number of epochs to train (default: 10000)')
 parser.add_argument('--train.optim_method', type=str, default='Adam', metavar='OPTIM',
                     help='optimization method (default: Adam)')

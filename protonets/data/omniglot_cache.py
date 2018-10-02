@@ -21,7 +21,7 @@ from protonets.data.base import convert_dict, CudaTransform, EpisodicBatchSample
 DATA_DIR  = os.path.join(os.path.dirname(__file__), '../../data')
 
 
-def get_partitions_kmeans(encodings, n_way, n_shot, n_query, random_scaling=True, n_partitions=100, n_clusters=500):
+def get_partitions_kmeans(encodings, n_way, n_shot, n_query, random_scaling=True, n_partitions=1, n_clusters=500):
     import os
     os.environ['JOBLIB_TEMP_FOLDER'] = '/tmp'  # default runs out of space for parallel processing
     from sklearn.cluster import KMeans
@@ -116,8 +116,5 @@ def load(opt, splits):
 
         ret[split] = TaskLoader(data=images, partitions=partitions, n_way=n_way, n_shot=n_support, n_query=n_query,
                                 cuda=opt['data.cuda'], length=n_episodes)
-
-        for example in ret[split]:
-            pdb.set_trace()
 
     return ret
