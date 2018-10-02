@@ -30,6 +30,7 @@ parser.add_argument('--data.test_episodes', type=int, default=100, metavar='NTES
 parser.add_argument('--data.trainval', action='store_true', help="run in train+validation mode (default: False)")
 parser.add_argument('--data.sequential', action='store_true', help="use sequential sampler instead of episodic (default: False)")
 parser.add_argument('--data.cuda', action='store_true', help="run in CUDA mode (default: False)")
+parser.add_argument('--data.rotations', action='store_true', help="3x data augmentation via rotations for Omniglot")
 
 # model args
 default_model_name = 'protonet_conv'

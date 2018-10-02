@@ -1,6 +1,7 @@
 import os
 import sys
 import glob
+import ipdb as pdb
 
 from functools import partial
 
@@ -35,21 +36,31 @@ def scale_image(key, height, width, d):
     d[key] = d[key].resize((height, width))
     return d
 
-def load_class_images(d):
+def load_class_images(d, opt):
     if d['class'] not in OMNIGLOT_CACHE:
-        alphabet, character, rot = d['class'].split('/')
+        if opt['data.rotations']:
+            alphabet, character, rot = d['class'].split('/')
+        else:
+            alphabet, character = d['class'].split('/')
         image_dir = os.path.join(OMNIGLOT_DATA_DIR, 'data', alphabet, character)
 
         class_images = sorted(glob.glob(os.path.join(image_dir, '*.png')))
         if len(class_images) == 0:
             raise Exception("No images found for omniglot class {} at {}. Did you run download_omniglot.sh first?".format(d['class'], image_dir))
 
-        image_ds = TransformDataset(ListDataset(class_images),
-                                    compose([partial(convert_dict, 'file_name'),
-                                             partial(load_image_path, 'file_name', 'data'),
-                                             partial(rotate_image, 'data', float(rot[3:])),
-                                             partial(scale_image, 'data', 28, 28),
-                                             partial(convert_tensor, 'data')]))
+        if opt['data.rotations']:
+            image_ds = TransformDataset(ListDataset(class_images),
+                                        compose([partial(convert_dict, 'file_name'),
+                                                 partial(load_image_path, 'file_name', 'data'),
+                                                 partial(rotate_image, 'data', float(rot[3:])),
+                                                 partial(scale_image, 'data', 28, 28),
+                                                 partial(convert_tensor, 'data')]))
+        else:
+            image_ds = TransformDataset(ListDataset(class_images),
+                                        compose([partial(convert_dict, 'file_name'),
+                                                 partial(load_image_path, 'file_name', 'data'),
+                                                 partial(scale_image, 'data', 28, 28),
+                                                 partial(convert_tensor, 'data')]))
 
         loader = torch.utils.data.DataLoader(image_ds, batch_size=len(image_ds), shuffle=False)
 
@@ -105,7 +116,7 @@ def load(opt, splits):
             n_episodes = opt['data.train_episodes']
 
         transforms = [partial(convert_dict, 'class'),
-                      load_class_images,
+                      partial(load_class_images, opt=opt),
                       partial(extract_episode, n_support, n_query)]
         if opt['data.cuda']:
             transforms.append(CudaTransform())
@@ -116,6 +127,14 @@ def load(opt, splits):
         with open(os.path.join(split_dir, "{:s}.txt".format(split)), 'r') as f:
             for class_name in f.readlines():
                 class_names.append(class_name.rstrip('\n'))
+        if not opt['data.rotations']:
+            class_names_pruned = []
+            for class_name in class_names:
+                pruned = class_name[:class_name.find('/rot')]
+                if pruned not in class_names_pruned:
+                    class_names_pruned.append(pruned)
+            class_names = class_names_pruned
+
         ds = TransformDataset(ListDataset(class_names), transforms)
 
         if opt['data.sequential']:
