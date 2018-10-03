@@ -110,10 +110,10 @@ def load(opt, splits):
             partitions = [Partition(labels=labels, n_way=n_way, n_shot=n_support, n_query=n_query)]
 
         elif mode == 'kmeans':
-            partitions = get_partitions_kmeans(encodings=encodings, n_way=n_way, n_shot=n_support, n_query=n_query, n_partitions=opt['tasks.partitions'], n_clusters=opt['tasks.clusters'])
+            partitions = get_partitions_kmeans(encodings=encodings, n_way=n_way, n_shot=n_support, n_query=n_query, n_partitions=opt['data.partitions'], n_clusters=opt['data.clusters'])
 
         elif mode == 'random':
-            partitions = [Partition(labels=np.random.choice(opt['tasks.clusters'], size=labels.shape, replace=True), n_way=n_way, n_shot=n_support, n_query=n_query) for i in range(opt['tasks.partitions'])]
+            partitions = [Partition(labels=np.random.choice(opt['data.clusters'], size=labels.shape, replace=True), n_way=n_way, n_shot=n_support, n_query=n_query) for i in range(opt['data.partitions'])]
         else:
             raise ValueError
 
