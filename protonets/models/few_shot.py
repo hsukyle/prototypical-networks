@@ -7,7 +7,7 @@ from torch.autograd import Variable
 from protonets.models import register_model
 
 from .utils import euclidean_dist
-import pdb
+import ipdb
 
 class Flatten(nn.Module):
     def __init__(self):
@@ -64,7 +64,6 @@ class Protonet(nn.Module):
 def load_protonet_conv(**kwargs):
     x_dim = kwargs['x_dim']
     hid_dim = kwargs['hid_dim']
-    z_dim = kwargs['z_dim']
 
     def conv_block(in_channels, out_channels):
         return nn.Sequential(
@@ -78,7 +77,7 @@ def load_protonet_conv(**kwargs):
         conv_block(x_dim[0], hid_dim),
         conv_block(hid_dim, hid_dim),
         conv_block(hid_dim, hid_dim),
-        conv_block(hid_dim, z_dim),
+        conv_block(hid_dim, hid_dim),
         Flatten()
     )
 

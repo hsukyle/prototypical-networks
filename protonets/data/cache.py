@@ -71,8 +71,6 @@ def load(opt, splits):
     encodings_dir = os.path.join(DATA_DIR, '{}_encodings'.format(opt['data.encoder']))
     filenames = os.listdir(encodings_dir)
 
-    # split_dir = os.path.join(OMNIGLOT_DATA_DIR, 'splits', opt['data.split'])
-
     ret = { }
     for split in splits:
         if split in ['val', 'test'] and opt['data.test_way'] != 0:

@@ -1,6 +1,8 @@
 import argparse
 
 from train import main
+import ipdb
+import os
 
 parser = argparse.ArgumentParser(description='Train prototypical networks')
 
@@ -35,8 +37,8 @@ parser.add_argument('--data.encoder', type=str, default='none', help='encoder na
 parser.add_argument('--data.train_mode', type=str, default='kmeans')
 parser.add_argument('--data.test_mode', type=str, default='ground_truth')
 
-parser.add_argument('--tasks.clusters', type=int, default=500)
-parser.add_argument('--tasks.partitions', type=int, default=100)
+parser.add_argument('--data.clusters', type=int, default=500)
+parser.add_argument('--data.partitions', type=int, default=100)
 
 # model args
 default_model_name = 'protonet_conv'
@@ -44,10 +46,8 @@ parser.add_argument('--model.model_name', type=str, default=default_model_name, 
                     help="model name (default: {:s})".format(default_model_name))
 parser.add_argument('--model.x_dim', type=str, default='1,28,28', metavar='XDIM',
                     help="dimensionality of input images (default: '1,28,28')")
-parser.add_argument('--model.hid_dim', type=int, default=64, metavar='HIDDIM',
-                    help="dimensionality of hidden layers (default: 64)")
-parser.add_argument('--model.z_dim', type=int, default=64, metavar='ZDIM',
-                    help="dimensionality of input images (default: 64)")
+parser.add_argument('--model.hid_dim', type=int, default=32, metavar='HIDDIM',
+                    help="dimensionality of hidden layers (default: 32)")
 
 # train args
 parser.add_argument('--train.epochs', type=int, default=300, metavar='NEPOCHS',
@@ -71,7 +71,29 @@ parser.add_argument('--log.fields', type=str, default=default_fields, metavar='F
 default_exp_dir = 'results'
 parser.add_argument('--log.exp_dir', type=str, default=default_exp_dir, metavar='EXP_DIR',
                     help="directory where experiments should be saved (default: {:s})".format(default_exp_dir))
+parser.add_argument('--log.date', type=str)
 
-args = vars(parser.parse_args())
+# args = vars(parser.parse_args())
 
-main(args)
+opt = vars(parser.parse_args())
+
+exp_str = ''
+
+if opt['data.train_mode'] == 'ground_truth':
+    exp_str += '_oracle'
+elif opt['data.train_mode'] == 'random':
+    exp_str += '_random'
+elif opt['data.train_mode'] == 'kmeans':
+    exp_str += '_{}'.format(opt['data.encoder'])
+
+if opt['data.train_mode'] == 'kmeans' or opt['data.train_mode'] == 'random':
+    exp_str += '_k{}_p{}'.format(opt['data.clusters'], opt['data.partitions'])
+
+exp_str += '_way{}_shot{}_hdim{}'.format(opt['data.way'], opt['data.shot'], opt['model.hid_dim'])
+exp_str = exp_str[1:]
+exp_str = os.path.join(opt['data.dataset'], opt['log.date'], exp_str)
+opt['log.exp_dir'] = os.path.join(opt['log.exp_dir'], exp_str)
+print(opt['log.exp_dir'])
+
+ipdb.set_trace()
+main(opt)
