@@ -4,6 +4,7 @@ dataset=omniglot
 date=20181003
 way=20
 shot=1
+query=15
 encoder=acai
 clusters=500
 partitions=100
@@ -13,7 +14,7 @@ CUDA_VISIBLE_DEVICES=${device} python scripts/train/few_shot/run_train.py \
     --data.dataset ${dataset} \
     --data.way ${way} \
     --data.shot ${shot} \
-    --data.query 5 \
+    --data.query ${query} \
     --data.test_way 5 \
     --data.test_shot 1 \
     --data.test_query 5 \
@@ -37,7 +38,7 @@ do
     --data.dataset ${dataset} \
     --data.way ${way} \
     --data.shot ${shot} \
-    --data.query 5 \
+    --data.query ${query} \
     --data.test_way 5 \
     --data.test_shot 1 \
     --data.test_query 5 \
