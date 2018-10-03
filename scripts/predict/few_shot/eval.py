@@ -3,6 +3,7 @@ import json
 import math
 from tqdm import tqdm
 
+import numpy as np
 import torch
 import torchnet as tnt
 
@@ -46,6 +47,7 @@ def main(opt):
         data_opt['data.test_way'], data_opt['data.test_shot'],
         data_opt['data.test_query'], data_opt['data.test_episodes']))
 
+    np.random.seed(4321)
     torch.manual_seed(1234)
     if data_opt['data.cuda']:
         torch.cuda.manual_seed(1234)

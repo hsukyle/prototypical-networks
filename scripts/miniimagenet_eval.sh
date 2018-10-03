@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-device=5
+device=6
 folder=
-for test_way in 5 20
+for test_way in 5
 do
-    for test_shot in 1 5
+    for test_shot in 1 5 20 50
     do
         CUDA_VISIBLE_DEVICES=${device} python scripts/predict/few_shot/run_eval.py \
             --model.model_path ${folder}/best_model.pt \

@@ -1,7 +1,7 @@
 import os
 import sys
 import glob
-import ipdb as pdb
+import ipdb
 
 from functools import partial
 
@@ -16,7 +16,8 @@ from torchnet.transform import compose
 from tqdm import tqdm
 
 import protonets
-from protonets.data.base import convert_dict, CudaTransform, EpisodicBatchSampler, SequentialBatchSampler, Partition, TaskLoader
+from protonets.data.base import Partition, TaskLoader, celeba_partitions
+from collections import defaultdict
 
 DATA_DIR  = os.path.join(os.path.dirname(__file__), '../../data')
 
@@ -103,11 +104,20 @@ def load(opt, splits):
         images = split_data['X']    # (index, H, W, C)
         labels = split_data['Y']
         encodings = split_data['Z']
-        images = np.transpose(images.astype(np.float32) / 255.0, [0, 3, 1, 2])
+
+
+        if images.shape[1] == 1 or images.shape[1] == 3:
+            images = images.astype(np.float32) / 255.0
+        else:
+            images = np.transpose(images.astype(np.float32) / 255.0, [0, 3, 1, 2])
         images = torch.from_numpy(images)
 
         if mode == 'ground_truth':
-            partitions = [Partition(labels=labels, n_way=n_way, n_shot=n_support, n_query=n_query)]
+            if opt['data.dataset'] == 'celeba':
+                annotations_filename = os.path.join(DATA_DIR, 'celeba/cropped/Anno/list_attr_celeba.txt')
+                partitions = celeba_partitions(labels=labels, split=split, annotations_filename=annotations_filename, n_way=n_way, n_shot=n_support, n_query=n_query)
+            else:
+                partitions = [Partition(labels=labels, n_way=n_way, n_shot=n_support, n_query=n_query)]
 
         elif mode == 'kmeans':
             partitions = get_partitions_kmeans(encodings=encodings, n_way=n_way, n_shot=n_support, n_query=n_query, n_partitions=opt['data.partitions'], n_clusters=opt['data.clusters'])
@@ -116,7 +126,6 @@ def load(opt, splits):
             partitions = [Partition(labels=np.random.choice(opt['data.clusters'], size=labels.shape, replace=True), n_way=n_way, n_shot=n_support, n_query=n_query) for i in range(opt['data.partitions'])]
         else:
             raise ValueError
-
         ret[split] = TaskLoader(data=images, partitions=partitions, n_way=n_way, n_shot=n_support, n_query=n_query,
                                 cuda=opt['data.cuda'], length=n_episodes)
 

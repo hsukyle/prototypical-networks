@@ -32,6 +32,7 @@ def main(opt):
     opt['model.x_dim'] = list(map(int, opt['model.x_dim'].split(',')))
     opt['log.fields'] = opt['log.fields'].split(',')
 
+    np.random.seed(4321)
     torch.manual_seed(1234)
     if opt['data.cuda']:
         torch.cuda.manual_seed(1234)
@@ -60,7 +61,7 @@ def main(opt):
     def on_start(state):
         if os.path.isfile(trace_file):
             os.remove(trace_file)
-        state['scheduler'] = lr_scheduler.StepLR(state['optimizer'], opt['train.decay_every'], gamma=0.5)
+        state['scheduler'] = lr_scheduler.StepLR(state['optimizer'], opt['train.decay_every'], gamma=1)
     engine.hooks['on_start'] = on_start
 
     def on_start_epoch(state):

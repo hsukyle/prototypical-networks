@@ -71,7 +71,8 @@ parser.add_argument('--log.fields', type=str, default=default_fields, metavar='F
 default_exp_dir = 'results'
 parser.add_argument('--log.exp_dir', type=str, default=default_exp_dir, metavar='EXP_DIR',
                     help="directory where experiments should be saved (default: {:s})".format(default_exp_dir))
-parser.add_argument('--log.date', type=str)
+parser.add_argument('--log.date', type=str, default='19991231')
+parser.add_argument('--log.suffix', type=str, default='')
 
 # args = vars(parser.parse_args())
 
@@ -89,7 +90,9 @@ elif opt['data.train_mode'] == 'kmeans':
 if opt['data.train_mode'] == 'kmeans' or opt['data.train_mode'] == 'random':
     exp_str += '_k{}_p{}'.format(opt['data.clusters'], opt['data.partitions'])
 
-exp_str += '_way{}_shot{}_hdim{}'.format(opt['data.way'], opt['data.shot'], opt['model.hid_dim'])
+exp_str += '_way{}_shot{}_query{}_hdim{}'.format(opt['data.way'], opt['data.shot'], opt['data.query'], opt['model.hid_dim'])
+if opt['log.suffix'] != '':
+    exp_str += '_{}'.format(opt['log.suffix'])
 exp_str = exp_str[1:]
 exp_str = os.path.join(opt['data.dataset'], opt['log.date'], exp_str)
 opt['log.exp_dir'] = os.path.join(opt['log.exp_dir'], exp_str)
