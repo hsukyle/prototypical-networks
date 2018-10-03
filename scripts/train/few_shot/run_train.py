@@ -95,5 +95,4 @@ exp_str = os.path.join(opt['data.dataset'], opt['log.date'], exp_str)
 opt['log.exp_dir'] = os.path.join(opt['log.exp_dir'], exp_str)
 print(opt['log.exp_dir'])
 
-ipdb.set_trace()
 main(opt)
