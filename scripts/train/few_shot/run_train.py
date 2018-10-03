@@ -35,6 +35,9 @@ parser.add_argument('--data.encoder', type=str, default='none', help='encoder na
 parser.add_argument('--data.train_mode', type=str, default='kmeans')
 parser.add_argument('--data.test_mode', type=str, default='ground_truth')
 
+parser.add_argument('--tasks.clusters', type=int, default=500)
+parser.add_argument('--tasks.partitions', type=int, default=100)
+
 # model args
 default_model_name = 'protonet_conv'
 parser.add_argument('--model.model_name', type=str, default=default_model_name, metavar='MODELNAME',

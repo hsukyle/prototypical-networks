@@ -112,10 +112,12 @@ def load(opt, splits):
             partitions = [Partition(labels=labels, n_way=n_way, n_shot=n_support, n_query=n_query)]
 
         elif mode == 'kmeans':
-            partitions = get_partitions_kmeans(encodings=encodings, n_way=n_way, n_shot=n_support, n_query=n_query)
+            partitions = get_partitions_kmeans(encodings=encodings, n_way=n_way, n_shot=n_support, n_query=n_query, n_partitions=opt['tasks.partitions'], n_clusters=opt['tasks.clusters'])
 
         elif mode == 'random':
-            partitions = [Partition(labels=np.random.choice(500, size=labels.shape, replace=True), n_way=n_way, n_shot=n_support, n_query=n_query) for i in range(100)]
+            partitions = [Partition(labels=np.random.choice(opt['tasks.clusters'], size=labels.shape, replace=True), n_way=n_way, n_shot=n_support, n_query=n_query) for i in range(opt['tasks.partitions'])]
+        else:
+            raise ValueError
 
         ret[split] = TaskLoader(data=images, partitions=partitions, n_way=n_way, n_shot=n_support, n_query=n_query,
                                 cuda=opt['data.cuda'], length=n_episodes)
