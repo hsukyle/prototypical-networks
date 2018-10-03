@@ -21,7 +21,7 @@ from protonets.data.base import convert_dict, CudaTransform, EpisodicBatchSample
 DATA_DIR  = os.path.join(os.path.dirname(__file__), '../../data')
 
 
-def get_partitions_kmeans(encodings, n_way, n_shot, n_query, random_scaling=True, n_partitions=1, n_clusters=500):
+def get_partitions_kmeans(encodings, n_way, n_shot, n_query, random_scaling=True, n_partitions=100, n_clusters=500):
     import os
     os.environ['JOBLIB_TEMP_FOLDER'] = '/tmp'  # default runs out of space for parallel processing
     from sklearn.cluster import KMeans
@@ -36,7 +36,7 @@ def get_partitions_kmeans(encodings, n_way, n_shot, n_query, random_scaling=True
         n_clusters_list = [n_clusters] * n_partitions
     assert len(encodings_list) * len(n_clusters_list) == n_partitions
     if n_partitions != 1:
-        n_init = 1
+        n_init = 3
         init = 'k-means++'
     else:
         n_init = 10
@@ -113,6 +113,9 @@ def load(opt, splits):
 
         elif mode == 'kmeans':
             partitions = get_partitions_kmeans(encodings=encodings, n_way=n_way, n_shot=n_support, n_query=n_query)
+
+        elif mode == 'random':
+            partitions = [Partition(labels=np.random.choice(500, size=labels.shape, replace=True), n_way=n_way, n_shot=n_support, n_query=n_query) for i in range(100)]
 
         ret[split] = TaskLoader(data=images, partitions=partitions, n_way=n_way, n_shot=n_support, n_query=n_query,
                                 cuda=opt['data.cuda'], length=n_episodes)
