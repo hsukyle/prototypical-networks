@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+device=6
 dataset=omniglot
 date=20181002
 way=20
@@ -8,7 +9,7 @@ clusters=500
 partitions=100
 hdim=32
 train_mode=ground_truth
-python scripts/train/few_shot/run_train.py \
+CUDA_VISIBLE_DEVICES=${device} python scripts/train/few_shot/run_train.py \
     --data.dataset ${dataset} \
     --data.way ${way} \
     --data.shot ${shot} \

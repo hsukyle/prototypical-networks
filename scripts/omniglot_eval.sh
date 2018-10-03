@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
+device=6
 folder=log/omniglot/20181002/oracle_way20_shot1_hdim32
 for test_way in 5 20
 do
     for test_shot in 1 5
     do
-        python scripts/predict/few_shot/run_eval.py \
+        CUDA_VISIBLE_DEVICES=${device} python scripts/predict/few_shot/run_eval.py \
             --model.model_path ${folder}/best_model.pt \
             --data.test_way ${test_way} \
             --data.test_shot ${test_shot} \
