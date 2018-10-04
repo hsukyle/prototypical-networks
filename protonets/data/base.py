@@ -45,7 +45,7 @@ class EpisodicBatchSampler(object):
 
 
 def celeba_partitions(labels, split, annotations_filename, n_way, n_shot, n_query, attributes_per_task=3):
-    if type(labels) == np.bytes_:
+    if type(labels[0]) == np.bytes_:
         labels = np.array([int(label.decode('utf-8')[:label.decode('utf-8').find('.jpg')]) for label in labels])
 
     if split == 'train':
@@ -154,6 +154,10 @@ class TaskLoader(object):
         for subset_id in sampled_subset_ids:
             indices = np.random.choice(partition[subset_id], self.n_shot + self.n_query, replace=False)
             x = self.data[indices]
+            x = x.astype(np.float32) / 255.0
+            if x.shape[1] != 1 and x.shape[1] != 3:
+                x = np.transpose(x, [0, 3, 1, 2])
+            x = torch.from_numpy(x)
             xs.append(x[:self.n_shot])
             xq.append(x[self.n_shot:])
         xs = torch.stack(xs, dim=0)

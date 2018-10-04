@@ -50,7 +50,7 @@ def get_partitions_kmeans(encodings, n_way, n_shot, n_query, random_scaling=True
     for n_clusters in tqdm(n_clusters_list, desc='get_partitions_kmeans_n_clusters'):
         for encodings in tqdm(encodings_list, desc='get_partitions_kmeans_encodings'):
             while True:
-                kmeans = KMeans(n_clusters=n_clusters, init=init, precompute_distances=True, n_jobs=n_init,
+                kmeans = KMeans(n_clusters=n_clusters, init=init, precompute_distances=True, n_jobs=-1,
                                 n_init=n_init, max_iter=3000).fit(encodings)
                 uniques, counts = np.unique(kmeans.labels_, return_counts=True)
                 num_big_enough_clusters = np.sum(counts >= n_shot + n_query)
@@ -104,13 +104,6 @@ def load(opt, splits):
         images = split_data['X']    # (index, H, W, C)
         labels = split_data['Y']
         encodings = split_data['Z']
-
-
-        if images.shape[1] == 1 or images.shape[1] == 3:
-            images = images.astype(np.float32) / 255.0
-        else:
-            images = np.transpose(images.astype(np.float32) / 255.0, [0, 3, 1, 2])
-        images = torch.from_numpy(images)
 
         if mode == 'ground_truth':
             if opt['data.dataset'] == 'celeba':
